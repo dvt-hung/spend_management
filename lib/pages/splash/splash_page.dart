@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:spend_management/pages/dashbroad/dashbroad_page.dart';
 import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:spend_management/utils/utils.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -19,14 +22,8 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 3),
-      () => Get.off(
-        const HomePage(),
-      ),
+      () => Get.off(() => DashBroadPage()),
     );
-    DateTime today = DateTime.now();
-    String dateSlug =
-        "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
-    print(dateSlug);
   }
 
   @override
