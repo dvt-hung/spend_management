@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:spend_management/models/type_model.dart';
 
 class Utils {
+  static double totalMoney = 0.0;
+
   static DateTime today = DateTime.now();
 
   static String getStringToDay() {
@@ -25,4 +28,7 @@ class Utils {
     final pick = await ImagePicker().pickImage(source: ImageSource.gallery);
     return File(pick!.path);
   }
+
+// <----- List spend or income ---->
+  static final groupType = ['Khoản thu', 'Chi tiêu'];
 }

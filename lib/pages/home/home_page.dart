@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:spend_management/pages/home/home_controller.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:spend_management/utils/app_styles.dart';
 import 'package:spend_management/utils/utils.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+
+  HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
-    double total = 1000000;
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
@@ -21,7 +24,11 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // <---- Hiển thị tổng tiền đang có ---->
-                buildTotalMoney(total),
+                GetBuilder<HomeController>(
+                    id: 'totalMoney',
+                    builder: (_) {
+                      return buildTotalMoney(Utils.totalMoney);
+                    }),
                 const SizedBox(
                   height: 20,
                 ),

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spend_management/pages/add_spending/add_spending_controller.dart';
 import 'package:spend_management/pages/types/types_page.dart';
 import 'package:spend_management/services/api_services.dart';
 import 'package:spend_management/utils/app_colors.dart';
@@ -16,14 +17,17 @@ import 'package:spend_management/utils/utils.dart';
 import '../../models/type_model.dart';
 
 class TypeController extends GetxController {
-  // Variable
+  // <-------------- Variable --------------->
   File? fileImageType;
   TextEditingController contentTypeController = TextEditingController();
   String msg = "";
   bool enableMsg = false;
   bool isUpdate = false;
-  List<TypeModel> listTypeModels = [];
+  List<TypeModel> listTypeModelsIncome = [];
+  List<TypeModel> listTypeModelsSpending = [];
+  String valueGroupType = Utils.groupType[0];
 
+  // <-------------- Function --------------->
   void changeActionUpdate() {
     isUpdate = !isUpdate;
     update(['actionUpdate']);
@@ -39,9 +43,15 @@ class TypeController extends GetxController {
   Future getTypes() async {
     await ApiServices.getListTypes((types) {
       List<dynamic> list = types;
-      listTypeModels.clear();
+      listTypeModelsIncome.clear();
+      listTypeModelsSpending.clear();
       for (var data in list) {
-        listTypeModels.add(TypeModel.fromJson(data));
+        TypeModel model = TypeModel.fromJson(data);
+        if (model.groupType.toString() == Utils.groupType[0].toString()) {
+          listTypeModelsIncome.add(model);
+        } else {
+          listTypeModelsSpending.add(model);
+        }
       }
       update(['getTypes']);
     });
@@ -57,7 +67,7 @@ class TypeController extends GetxController {
   Future addNewType() async {
     TypeModel typeModel = TypeModel();
     String content = contentTypeController.text;
-
+    typeModel.groupType = valueGroupType;
     // Check value
     if (fileImageType == null || content.isEmpty) {
       msg = "Đang bỏ trống dữ liệu kìa!";
@@ -77,8 +87,6 @@ class TypeController extends GetxController {
         (result) {
           if (result) {
             Get.back();
-            print("Back success");
-
             Get.snackbar(
               "Thông báo",
               "Đã thêm mới thành công",
@@ -86,6 +94,7 @@ class TypeController extends GetxController {
             );
             fileImageType = null;
             contentTypeController.clear();
+            valueGroupType = Utils.groupType[0];
           } else {
             msg = "Đã có lỗi xảy ra!";
             Get.back();
@@ -95,6 +104,11 @@ class TypeController extends GetxController {
       );
     }
     update(['updateMessage']);
+  }
+
+  void changeGroup(String val) {
+    valueGroupType = val;
+    update(['updateGroupType']);
   }
 
   // <----- Show dialog add new type ----->
@@ -113,28 +127,28 @@ class TypeController extends GetxController {
           children: [
             // <----- ẢNH CỦA DIALOG ----->
             GetBuilder<TypeController>(
-                id: 'pickerImage',
-                builder: (_) {
-                  return GestureDetector(
-                      onTap: pickerImage,
-                      child: fileImageType == null
-                          ? Image.asset(
-                              "assets/gallery.png",
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              fileImageType!,
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            ));
-                }),
-            const SizedBox(
-              height: 10.0,
+              id: 'pickerImage',
+              builder: (_) {
+                return GestureDetector(
+                    onTap: pickerImage,
+                    child: fileImageType == null
+                        ? Image.asset(
+                            "assets/gallery.png",
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            fileImageType!,
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                          ));
+              },
             ),
-
+            const SizedBox(
+              height: 5.0,
+            ),
             // <----- NHẬP TÊN NHÓM CHI TIÊU CỦA DIALOG ----->
             TextFormField(
               controller: contentTypeController,
@@ -147,18 +161,48 @@ class TypeController extends GetxController {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 5.0,
-            ),
+
             GetBuilder<TypeController>(
               id: 'updateMessage',
               builder: (_) {
                 return enableMsg ? Text(msg) : const SizedBox.shrink();
               },
             ),
-            const SizedBox(
-              height: 5.0,
-            ),
+
+            // <----- LỰA CHỌN KHOẢN THU HAY CHI TIÊU ----->
+
+            GetBuilder<TypeController>(
+                id: 'updateGroupType',
+                builder: (_) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<String>(
+                            dense: true,
+                            title: Text(
+                              Utils.groupType[0],
+                            ),
+                            value: Utils.groupType[0],
+                            groupValue: valueGroupType,
+                            onChanged: (val) {
+                              changeGroup(val.toString());
+                            }),
+                      ),
+                      Expanded(
+                        child: RadioListTile<dynamic>(
+                          dense: true,
+                          title: Text(Utils.groupType[1]),
+                          value: Utils.groupType[1],
+                          groupValue: valueGroupType,
+                          onChanged: (val) {
+                            changeGroup(val.toString());
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+
             // <----- NÚT THAO TÁC CỦA DIALOG ----->
             Row(
               children: [
