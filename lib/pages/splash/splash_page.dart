@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:spend_management/pages/dashbroad/dashbroad_page.dart';
+
 import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:spend_management/utils/utils.dart';
+
+import '../dashboard/dashbroad_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -22,7 +24,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 3),
-      () => Get.off(() => DashBroadPage()),
+      () => Get.off(() => DashBoardPage()),
     );
   }
 

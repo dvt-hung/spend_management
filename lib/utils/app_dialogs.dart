@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:spend_management/utils/app_colors.dart';
 
 class AppDialogs {
+  static showSnackBar(String title, String message, SnackPosition position) {
+    Get.snackbar(title, message,
+        backgroundColor: AppColors.whiteColor, snackPosition: position);
+  }
+
   static AlertDialog alertDialogProgress = AlertDialog(
     backgroundColor: Colors.transparent,
     elevation: 0,
