@@ -8,9 +8,19 @@ class AppStyles {
 
   static TextStyle textStyle = GoogleFonts.raleway();
 
-  static TextStyle priceStyle_20 = GoogleFonts.sarabun()
+  // Text style of price (spending) font size = 15
+  static TextStyle priceStyleSpending15 = GoogleFonts.sarabun()
+      .copyWith(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.red);
+
+  // Text style of price (spending) font size = 20
+  static TextStyle priceStyleSpending20 = GoogleFonts.sarabun()
       .copyWith(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red);
 
-  static TextStyle priceStyle_15 = GoogleFonts.sarabun()
-      .copyWith(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.red);
+  // Text style of price (spending) font size = 15
+  static TextStyle priceStyleIncome15 = GoogleFonts.sarabun()
+      .copyWith(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.green);
+
+  // Text style of price (spending) font size = 20
+  static TextStyle priceStyleIncome20 = GoogleFonts.sarabun()
+      .copyWith(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.green);
 }

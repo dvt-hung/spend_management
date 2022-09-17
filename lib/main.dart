@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:spend_management/pages/splash/splash_page.dart';
 
 import 'firebase_options.dart';
+import 'models/note_model.dart';
+import 'models/type_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

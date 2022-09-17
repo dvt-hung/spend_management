@@ -47,7 +47,12 @@ class DashBoardPage extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             backgroundColor: AppColors.primaryColor,
             onPressed: () {
-              Get.to(AddSpendingPage());
+              Get.to(
+                AddSpendingPage(
+                  isDetail: false,
+                  titleAppBar: "Thêm giao dịch",
+                ),
+              );
             },
             child: const Icon(Icons.add),
           ),
