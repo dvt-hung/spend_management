@@ -1,15 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:spend_management/models/note_model.dart';
+import 'package:spend_management/pages/home/home_controller.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:spend_management/utils/app_styles.dart';
 import 'package:spend_management/utils/utils.dart';
 
+import '../../components/item_note_component.dart';
+import '../../models/type_model.dart';
+
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+
+  HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
-    double total = 1000000;
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
@@ -21,53 +29,37 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // <---- Hiển thị tổng tiền đang có ---->
-                buildTotalMoney(total),
+                GetBuilder<HomeController>(
+                    id: 'totalMoney',
+                    builder: (_) {
+                      return buildTotalMoney(Utils.totalMoney);
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
                 // <---- Hiển thị tổng chi tiêu hôm nay ---->
 
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                GetBuilder<HomeController>(
+                    id: 'getToday',
+                    builder: (_) {
+                      return Column(
                         children: [
-                          Text(
-                            "Chi tiêu hôm nay ",
-                            style: AppStyles.textStyle.copyWith(
-                                fontSize: 18, fontWeight: FontWeight.w500),
+                          buildNoteContainer(
+                              homeController.mapNoteSpending,
+                              homeController.spendingMoney,
+                              "Chi tiêu hôm nay",
+                              AppStyles.priceStyleSpending20),
+                          const SizedBox(
+                            height: 20.0,
                           ),
-                          Text(
-                            Utils.convertCurrency(200000),
-                            style: AppStyles.priceStyle_20,
-                          )
+                          buildNoteContainer(
+                              homeController.mapNoteIncome,
+                              homeController.incomeMoney,
+                              "Khoản thu hôm nay",
+                              AppStyles.priceStyleIncome20),
                         ],
-                      ),
-                      const Divider(
-                        indent: 20,
-                        endIndent: 20,
-                        height: 20,
-                        // color: Colors.amber,
-                      ),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return ItemSpendToday(
-                              imageItem: "assets/wallet.png",
-                              titleItem: "Title",
-                              priceItem: 100000,
-                            );
-                          }),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
+                      );
+                    }),
               ],
             ),
           ),
@@ -76,7 +68,57 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Row buildTotalMoney(double total) {
+  Container buildNoteContainer(List<Map<String, dynamic>> listItem, int money,
+      String title, TextStyle styleMoney) {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: AppStyles.textStyle
+                    .copyWith(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                Utils.convertCurrency(money),
+                style: styleMoney,
+              )
+            ],
+          ),
+          const Divider(
+            indent: 20,
+            endIndent: 20,
+            height: 20,
+            // color: Colors.amber,
+          ),
+          ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: listItem.length,
+              itemBuilder: (context, index) {
+                // Get note model
+                NoteModel noteModel = listItem[index]['note'];
+
+                // Get type model
+                TypeModel typeModel = listItem[index]['type'];
+                return ItemNote(
+                  noteModel: noteModel,
+                  typeModel: typeModel,
+                );
+              }),
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+    );
+  }
+
+  Row buildTotalMoney(int total) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -107,37 +149,6 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ItemSpendToday extends StatelessWidget {
-  const ItemSpendToday({
-    Key? key,
-    required this.imageItem,
-    required this.titleItem,
-    required this.priceItem,
-  }) : super(key: key);
-  final String imageItem;
-  final String titleItem;
-  final double priceItem;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Image.asset(
-        imageItem,
-        height: 30,
-        width: 30,
-      ),
-      title: Text(
-        titleItem,
-        style: AppStyles.textStyle,
-      ),
-      trailing: Text(
-        Utils.convertCurrency(priceItem),
-        style: AppStyles.priceStyle_15,
-      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class DashBroadController extends GetxController {
+class DashBoardController extends GetxController {
   int currentPage = 0;
 
   void changePage(int index) {

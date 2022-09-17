@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/pages/add_spending/add_spending_page.dart';
-import 'package:spend_management/pages/dashbroad/dashbroad_controller.dart';
 import 'package:spend_management/pages/history/history_page.dart';
 import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/pages/splash/splash_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
 
-class DashBroadPage extends StatelessWidget {
-  DashBroadPage({Key? key}) : super(key: key);
+import 'dashbroad_controller.dart';
+
+class DashBoardPage extends StatelessWidget {
+  DashBoardPage({Key? key}) : super(key: key);
 
   final pages = [
-    const HomePage(),
+    HomePage(),
     const HistoryPage(),
   ];
 
-  DashBroadController dashBroadController = Get.put(DashBroadController());
+  DashBoardController dashBroadController = Get.put(DashBoardController());
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DashBroadController>(
+    return GetBuilder<DashBoardController>(
       builder: (_) {
         return Scaffold(
           body: IndexedStack(
@@ -46,7 +47,12 @@ class DashBroadPage extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             backgroundColor: AppColors.primaryColor,
             onPressed: () {
-              Get.to(AddSpendingPage());
+              Get.to(
+                AddSpendingPage(
+                  isDetail: false,
+                  titleAppBar: "Thêm giao dịch",
+                ),
+              );
             },
             child: const Icon(Icons.add),
           ),
