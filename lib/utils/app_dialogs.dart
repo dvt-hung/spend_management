@@ -109,7 +109,7 @@ class DialogDelete extends StatelessWidget {
               children: [
                 Text(
                   "Bạn có chắc là xóa không?",
-                  style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                  style: AppStyles.titleStyle.copyWith(fontSize: 18),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +120,8 @@ class DialogDelete extends StatelessWidget {
                       },
                       child: const Text(
                         "Hủy",
-                        style: TextStyle(color: AppColors.blackColor),
+                        style: TextStyle(
+                            color: AppColors.thirdColor, fontSize: 16),
                       ),
                     ),
                     const SizedBox(
@@ -133,7 +134,8 @@ class DialogDelete extends StatelessWidget {
                       },
                       child: const Text(
                         "Xác nhận",
-                        style: TextStyle(color: AppColors.redColor),
+                        style: TextStyle(
+                            color: AppColors.selectColor, fontSize: 16),
                       ),
                     ),
                   ],
@@ -144,7 +146,7 @@ class DialogDelete extends StatelessWidget {
           Positioned(
             top: -30,
             child: CircleAvatar(
-              backgroundColor: AppColors.redColor,
+              backgroundColor: AppColors.primaryColor,
               minRadius: 40,
               maxRadius: 40,
               child: Image.asset(

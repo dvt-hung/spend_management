@@ -75,7 +75,6 @@ class ApiServices {
   // <----- Update note ---->
   static Future updateNote(NoteModel noteModel, TypeModel typeNew,
       TypeModel typeOld, int moneyOld, Function callBack) async {
-    print("Start update");
     // <-- Return money -->
     int moneyReturn;
     if (typeOld.groupType == Utils.groupType[0]) {
@@ -85,7 +84,6 @@ class ApiServices {
       moneyReturn = Utils.totalMoney +
           moneyOld; // Nếu là chi tiêu thì "Tổng tiền sẽ được cộng lại số tiền đã sử dụng"
     }
-    print("Update money old $moneyReturn");
     await updateTotalMoney(moneyReturn);
 
     // <-- Update new total -->
@@ -152,16 +150,21 @@ class ApiServices {
 
   // <----- Upload image to storage ---->
   static Future<String> uploadImageType(File? fileImageType) async {
-    final String nameImageType =
-        "ImageType" + Utils.today.millisecondsSinceEpoch.toString();
+    String nameImageType = "ImageType" + fileImageType.hashCode.toString();
+    print(fileImageType.hashCode);
     final pathStorage = "images/$nameImageType";
+
+    print("Name: $nameImageType");
+    print("Path: $pathStorage");
 
     Reference ref = storage.ref().child(pathStorage);
     if (fileImageType == null) {
       return "";
     } else {
       UploadTask? uploadTask = ref.putFile(fileImageType);
-      final snapshot = await uploadTask.whenComplete(() => () {});
+      final snapshot = await uploadTask.whenComplete(() => () {
+            nameImageType = "";
+          });
       // Get URL image
       final urlImage = await snapshot.ref.getDownloadURL();
       return urlImage;

@@ -1,27 +1,26 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/components/input_component.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
-import 'package:spend_management/pages/add_spending/add_spending_controller.dart';
+import 'package:spend_management/pages/add_spending/spending_controller.dart';
 import 'package:spend_management/pages/dashboard/dashbroad_page.dart';
 
 import 'package:spend_management/pages/types/types_page.dart';
-import 'package:spend_management/services/api_services.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:spend_management/utils/app_dialogs.dart';
 import 'package:spend_management/utils/app_styles.dart';
 import 'package:spend_management/utils/app_urls.dart';
 import 'package:spend_management/utils/utils.dart';
 
-class AddSpendingPage extends StatelessWidget {
-  AddSpendingPage({Key? key, required this.isDetail, required this.titleAppBar})
+class SpendingPage extends StatelessWidget {
+  SpendingPage({Key? key, required this.isDetail, required this.titleAppBar})
       : super(key: key);
   String titleAppBar;
   bool isDetail = false;
 
-  AddSpendingController addSpendingController =
-      Get.put(AddSpendingController());
+  SpendingController addSpendingController = Get.put(SpendingController());
 
   TextEditingController moneyTextController = TextEditingController();
   TextEditingController noteTextController = TextEditingController();
@@ -35,56 +34,32 @@ class AddSpendingPage extends StatelessWidget {
           addSpendingController.noteModel.money!.toString();
       moneyOld = addSpendingController.noteModel.money!;
     }
-    return Scaffold(
-        appBar: buildAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-          child: GetBuilder<AddSpendingController>(
-            id: 'updateType',
-            builder: (_) {
-              return Column(
-                children: [
-                  Text(
-                    addSpendingController.noteModel.date == null
-                        ? Utils.getStringToDay()
-                        : Utils.convertDateToString(
-                            addSpendingController.noteModel.date!),
-                    style: AppStyles.titleStyle.copyWith(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  inputType(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  inputMoney(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  inputNote(),
-                ],
-              );
-            },
-          ),
-        ));
+    return WillPopScope(
+      onWillPop: () async {
+        Get.back();
+        addSpendingController.onClose();
+        return false;
+      },
+      child: buildBody(),
+    );
   }
 
   AppBar buildAppBar() {
     return AppBar(
-      elevation: 1.0,
+      elevation: 0,
       title: Text(
         titleAppBar,
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: AppColors.whiteColor),
       ),
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: Colors.transparent,
       leading: IconButton(
         onPressed: () {
-          Get.offAll(() => DashBoardPage());
+          addSpendingController.onClose();
+          Get.back();
         },
         icon: const Icon(
           Icons.arrow_back,
-          color: AppColors.blackColor,
+          color: AppColors.whiteColor,
         ),
       ),
       actions: [
@@ -99,7 +74,7 @@ class AddSpendingPage extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.delete,
-                      color: Colors.black,
+                      color: AppColors.whiteColor,
                     ),
                   ),
                   IconButton(
@@ -110,7 +85,7 @@ class AddSpendingPage extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.edit,
-                      color: Colors.black,
+                      color: AppColors.whiteColor,
                     ),
                   ),
                 ],
@@ -122,10 +97,66 @@ class AddSpendingPage extends StatelessWidget {
                 },
                 icon: const Icon(
                   Icons.check,
-                  color: Colors.black,
+                  color: AppColors.whiteColor,
                 ),
               ),
       ],
+    );
+  }
+
+  Container buildBody() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.secondColor,
+            AppColors.primaryColor,
+            AppColors.whiteColor,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: buildAppBar(),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+              child: GetBuilder<SpendingController>(
+                id: 'updateType',
+                builder: (_) {
+                  return Column(
+                    children: [
+                      Text(
+                        addSpendingController.noteModel.date == null
+                            ? Utils.getStringToDay()
+                            : Utils.convertDateToString(
+                                addSpendingController.noteModel.date!),
+                        style: AppStyles.titleStyle.copyWith(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.whiteColor),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      inputMoney(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      inputType(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      inputNote(),
+                    ],
+                  );
+                },
+              ),
+            ),
+          )),
     );
   }
 
@@ -137,7 +168,8 @@ class AddSpendingPage extends StatelessWidget {
               addSpendingController.noteModel.note == null
           ? "Ghi chú thêm"
           : addSpendingController.noteModel.note.toString(),
-      colorHintTextInput: Colors.black,
+      colorHintTextInput: AppColors.whiteColor,
+      colorTextInput: AppColors.whiteColor,
       maxLine: 1,
     );
   }
@@ -152,6 +184,7 @@ class AddSpendingPage extends StatelessWidget {
       onTap: () {
         Get.to(() => TypesPage());
       },
+      colorHintTextInput: AppColors.whiteColor,
     );
   }
 

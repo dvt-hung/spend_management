@@ -7,7 +7,8 @@ import '../../utils/app_dialogs.dart';
 import '../../utils/utils.dart';
 import '../dashboard/dashbroad_page.dart';
 
-class AddSpendingController extends GetxController {
+class SpendingController extends GetxController {
+  // <---- Variable ---->
   TypeModel type = TypeModel();
   NoteModel noteModel = NoteModel();
   void changeType(TypeModel typeModel) {
@@ -15,6 +16,7 @@ class AddSpendingController extends GetxController {
     update(['updateType']);
   }
 
+  // <---- Function ---->
   Future deleteNote() async {
     Get.dialog(AppDialogs.alertDialogProgress);
     await ApiServices.deleteNote(noteModel, type, (result) {
@@ -87,5 +89,20 @@ class AddSpendingController extends GetxController {
         }
       },
     );
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    type = TypeModel();
+    noteModel = NoteModel();
+    // disposeScreen();
+  }
+
+  Future disposeScreen() async {
+    super.onClose();
+    type = TypeModel();
+    noteModel = NoteModel();
   }
 }

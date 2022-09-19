@@ -19,48 +19,51 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // <---- Hiển thị tổng tiền đang có ---->
-                GetBuilder<HomeController>(
-                    id: 'totalMoney',
-                    builder: (_) {
-                      return buildTotalMoney(Utils.totalMoney);
-                    }),
-                const SizedBox(
-                  height: 20,
-                ),
-                // <---- Hiển thị tổng chi tiêu hôm nay ---->
+      child: Container(
+        decoration: const BoxDecoration(color: AppColors.primaryColor),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // <---- Hiển thị tổng tiền đang có ---->
+                  GetBuilder<HomeController>(
+                      id: 'totalMoney',
+                      builder: (_) {
+                        return buildTotalMoney(Utils.totalMoney);
+                      }),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
-                GetBuilder<HomeController>(
-                    id: 'getToday',
-                    builder: (_) {
-                      return Column(
-                        children: [
-                          buildNoteContainer(
-                              homeController.mapNoteSpending,
-                              homeController.spendingMoney,
-                              "Chi tiêu hôm nay",
-                              AppStyles.priceStyleSpending20),
-                          const SizedBox(
-                            height: 20.0,
-                          ),
-                          buildNoteContainer(
-                              homeController.mapNoteIncome,
-                              homeController.incomeMoney,
-                              "Khoản thu hôm nay",
-                              AppStyles.priceStyleIncome20),
-                        ],
-                      );
-                    }),
-              ],
+                  // <---- Hiển thị tổng chi tiêu hôm nay ---->
+                  GetBuilder<HomeController>(
+                      id: 'getToday',
+                      builder: (_) {
+                        return Column(
+                          children: [
+                            buildNoteContainer(
+                                homeController.mapNoteSpending,
+                                homeController.spendingMoney,
+                                "Chi tiêu hôm nay",
+                                AppStyles.priceStyleSpending20),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            buildNoteContainer(
+                                homeController.mapNoteIncome,
+                                homeController.incomeMoney,
+                                "Khoản thu hôm nay",
+                                AppStyles.priceStyleIncome20),
+                          ],
+                        );
+                      }),
+                ],
+              ),
             ),
           ),
         ),
@@ -80,7 +83,7 @@ class HomePage extends StatelessWidget {
               Text(
                 title,
                 style: AppStyles.textStyle
-                    .copyWith(fontSize: 18, fontWeight: FontWeight.w500),
+                    .copyWith(fontSize: 15, fontWeight: FontWeight.w500),
               ),
               Text(
                 Utils.convertCurrency(money),
@@ -130,23 +133,15 @@ class HomePage extends StatelessWidget {
               style: AppStyles.priceStyle.copyWith(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: total > 0 ? Colors.green : Colors.red,
+                color: total > 0 ? AppColors.whiteColor : AppColors.thirdColor,
               ),
             ),
             Text(
               "Tổng số dư",
               style: AppStyles.textStyle
-                  .copyWith(fontSize: 15, color: Colors.black),
+                  .copyWith(fontSize: 15, color: AppColors.whiteColor),
             ),
           ],
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Image.asset(
-            "assets/wallet.png",
-            height: 40,
-            width: 40,
-          ),
         ),
       ],
     );

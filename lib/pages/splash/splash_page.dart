@@ -22,6 +22,12 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    for (int i = 1; i <= 12; i++) {
+      DateTime month = DateTime(Utils.today.toDate().year, i);
+      Utils.monthsOfYear.add(month);
+    }
+
     Future.delayed(
       const Duration(seconds: 3),
       () => Get.off(() => DashBoardPage()),

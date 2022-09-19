@@ -1,14 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:spend_management/components/group_type_component.dart';
 import 'package:spend_management/pages/types/type_controller.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/utils/utils.dart';
-
-import '../../components/item_type_component.dart';
-import '../../models/type_model.dart';
-import '../../utils/app_styles.dart';
 
 class TypesPage extends StatelessWidget {
   TypesPage({Key? key}) : super(key: key);
@@ -18,7 +13,7 @@ class TypesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: AppColors.primaryColor,
       appBar: buildAppBar(),
       body: GetBuilder<TypeController>(
         id: 'getTypes',
@@ -42,8 +37,8 @@ class TypesPage extends StatelessWidget {
 
   AppBar buildAppBar() {
     return AppBar(
-      elevation: 0.5,
-      backgroundColor: AppColors.appbarColor,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       actions: [
         GetBuilder<TypeController>(
             id: 'actionUpdate',

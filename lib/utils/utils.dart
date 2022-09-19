@@ -6,7 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:spend_management/models/type_model.dart';
 
 class Utils {
+  //<----- VARIABLE ----->
   static int totalMoney = 0;
+  static List<DateTime> monthsOfYear = [];
+
+  // <---- GET TODAY---->
 
   static Timestamp today = Timestamp.now();
 
@@ -16,13 +20,26 @@ class Utils {
   static Timestamp endToday = Timestamp.fromDate(DateTime(today.toDate().year,
       today.toDate().month, today.toDate().day, 23, 59, 59));
 
+  // <---- GET FIRST AND END DAY OF MONTH ---->
+  // DateTime lastDayOfMonth =
+  // new DateTime(now.year, 8 + 1, 0, 23, 59, 59);
+  //
+  // DateTime date = DateTime(now.year, 8, 1);
+  static Timestamp getFirstDayOfMonth(int year, int month) {
+    Timestamp firstDay = Timestamp.fromDate(DateTime(year, month, 1));
+
+    return firstDay;
+  }
+
+  static Timestamp getLastDayOfMonth(int year, int month) {
+    Timestamp lastDay =
+        Timestamp.fromDate(DateTime(year, month + 1, 0, 23, 59, 59));
+
+    return lastDay;
+  }
+
   static String getStringToDay() {
-    String dateToday = today.toDate().day.toString().padLeft(2, '0') +
-        " - " +
-        today.toDate().month.toString().padLeft(2, '0') +
-        " - " +
-        today.toDate().year.toString();
-    return dateToday;
+    return DateFormat("dd - MM - yyyy").format(today.toDate());
   }
 
   static String convertDateToString(Timestamp timestamp) {

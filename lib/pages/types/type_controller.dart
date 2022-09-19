@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spend_management/pages/add_spending/add_spending_controller.dart';
+import 'package:spend_management/pages/add_spending/spending_controller.dart';
 import 'package:spend_management/pages/types/types_page.dart';
 import 'package:spend_management/services/api_services.dart';
 import 'package:spend_management/utils/app_colors.dart';
@@ -74,7 +74,6 @@ class TypeController extends GetxController {
       enableMsg = true;
     } else {
       // Show dialogProgress
-      print("Show dialog");
       Get.dialog(AppDialogs.alertDialogProgress);
 
       // set content value -> model
@@ -87,18 +86,17 @@ class TypeController extends GetxController {
         (result) {
           if (result) {
             Get.back();
-            Get.snackbar(
+            AppDialogs.showSnackBar(
               "Thông báo",
               "Đã thêm mới thành công",
-              snackPosition: SnackPosition.BOTTOM,
             );
+
             fileImageType = null;
             contentTypeController.clear();
             valueGroupType = Utils.groupType[0];
           } else {
             msg = "Đã có lỗi xảy ra!";
             Get.back();
-            print("Back Error");
           }
         },
       );
@@ -121,113 +119,116 @@ class TypeController extends GetxController {
         fontWeight: FontWeight.bold,
       ),
       titlePadding: const EdgeInsets.all(5.0),
-      content: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          children: [
-            // <----- ẢNH CỦA DIALOG ----->
-            GetBuilder<TypeController>(
-              id: 'pickerImage',
-              builder: (_) {
-                return GestureDetector(
-                    onTap: pickerImage,
-                    child: fileImageType == null
-                        ? Image.asset(
-                            "assets/gallery.png",
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.file(
-                            fileImageType!,
-                            height: 80,
-                            width: 80,
-                            fit: BoxFit.cover,
-                          ));
-              },
-            ),
-            const SizedBox(
-              height: 5.0,
-            ),
-            // <----- NHẬP TÊN NHÓM CHI TIÊU CỦA DIALOG ----->
-            TextFormField(
-              controller: contentTypeController,
-              decoration: InputDecoration(
-                hintText: "Tên nhóm chi tiêu ",
-                label: const Text("Tên chi tiêu"),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+      content: Column(
+        children: [
+          // <----- ẢNH CỦA DIALOG ----->
+          GetBuilder<TypeController>(
+            id: 'pickerImage',
+            builder: (_) {
+              return GestureDetector(
+                  onTap: pickerImage,
+                  child: fileImageType == null
+                      ? Image.asset(
+                          "assets/gallery.png",
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          fileImageType!,
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
+                        ));
+            },
+          ),
+          const SizedBox(
+            height: 5.0,
+          ),
+          // <----- NHẬP TÊN NHÓM CHI TIÊU CỦA DIALOG ----->
+          TextFormField(
+            controller: contentTypeController,
+            decoration: InputDecoration(
+              hintText: "Tên nhóm chi tiêu ",
+              label: const Text("Tên chi tiêu"),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
+          ),
 
-            GetBuilder<TypeController>(
-              id: 'updateMessage',
+          GetBuilder<TypeController>(
+            id: 'updateMessage',
+            builder: (_) {
+              return enableMsg ? Text(msg) : const SizedBox.shrink();
+            },
+          ),
+
+          // <----- LỰA CHỌN KHOẢN THU HAY CHI TIÊU ----->
+
+          GetBuilder<TypeController>(
+              id: 'updateGroupType',
               builder: (_) {
-                return enableMsg ? Text(msg) : const SizedBox.shrink();
-              },
-            ),
-
-            // <----- LỰA CHỌN KHOẢN THU HAY CHI TIÊU ----->
-
-            GetBuilder<TypeController>(
-                id: 'updateGroupType',
-                builder: (_) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: RadioListTile<String>(
-                            dense: true,
-                            title: Text(
-                              Utils.groupType[0],
-                            ),
-                            value: Utils.groupType[0],
-                            groupValue: valueGroupType,
-                            onChanged: (val) {
-                              changeGroup(val.toString());
-                            }),
-                      ),
-                      Expanded(
-                        child: RadioListTile<dynamic>(
+                return Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<String>(
                           dense: true,
-                          title: Text(Utils.groupType[1]),
-                          value: Utils.groupType[1],
+                          title: Text(
+                            Utils.groupType[0],
+                          ),
+                          value: Utils.groupType[0],
                           groupValue: valueGroupType,
                           onChanged: (val) {
                             changeGroup(val.toString());
-                          },
-                        ),
+                          }),
+                    ),
+                    Expanded(
+                      child: RadioListTile<dynamic>(
+                        dense: true,
+                        title: Text(Utils.groupType[1]),
+                        value: Utils.groupType[1],
+                        groupValue: valueGroupType,
+                        onChanged: (val) {
+                          changeGroup(val.toString());
+                        },
                       ),
-                    ],
-                  );
-                }),
+                    ),
+                  ],
+                );
+              }),
 
-            // <----- NÚT THAO TÁC CỦA DIALOG ----->
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    fileImageType = null;
-                    contentTypeController.clear();
-                    Get.back();
-                  },
-                  child: const Text("Hủy"),
+          // <----- NÚT THAO TÁC CỦA DIALOG ----->
+          Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  fileImageType = null;
+                  contentTypeController.clear();
+                  Get.back();
+                },
+                child: const Text(
+                  "Hủy",
+                  style: TextStyle(fontSize: 16, color: AppColors.thirdColor),
                 ),
-                const SizedBox(
-                  width: 20.0,
+              ),
+              const SizedBox(
+                width: 20.0,
+              ),
+              TextButton(
+                onPressed: () {
+                  addNewType();
+                },
+                child: const Text(
+                  "Xác nhận",
+                  style: TextStyle(fontSize: 16, color: AppColors.selectColor),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    addNewType();
-                  },
-                  child: const Text("Xác nhận"),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            )
-          ],
-        ),
+              )
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          )
+        ],
       ),
     );
   }
@@ -255,20 +256,10 @@ class TypeController extends GetxController {
           if (resultUpdate) {
             Future.delayed(const Duration(milliseconds: 500), () {
               Get.back();
-              Get.snackbar(
-                "",
-                "",
-                titleText: Text(
-                  "Thông báo",
-                  style: AppStyles.titleStyle
-                      .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                messageText: Text(
-                  "Đã cập nhật mới thành công",
-                  style: AppStyles.textStyle.copyWith(fontSize: 16),
-                ),
-                snackPosition: SnackPosition.TOP,
-                backgroundColor: AppColors.whiteColor,
+
+              AppDialogs.showSnackBar(
+                "Thông báo",
+                "Đã cập nhật thành công",
               );
             });
             fileImageType = null;

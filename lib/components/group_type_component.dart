@@ -14,7 +14,7 @@ class GroupTypeComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 20.0, left: 5.0),
+      margin: const EdgeInsets.only(top: 20.0, left: 5.0, right: 5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

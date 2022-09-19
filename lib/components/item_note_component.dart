@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
-import 'package:spend_management/pages/add_spending/add_spending_controller.dart';
-import 'package:spend_management/pages/add_spending/add_spending_page.dart';
+import 'package:spend_management/pages/add_spending/spending_controller.dart';
+import 'package:spend_management/pages/add_spending/spending_page.dart';
 import '../utils/app_styles.dart';
 import '../utils/utils.dart';
 
@@ -19,15 +19,14 @@ class ItemNote extends StatelessWidget {
   final TypeModel typeModel;
   @override
   Widget build(BuildContext context) {
-    AddSpendingController addSpendingController =
-        Get.put(AddSpendingController());
+    SpendingController addSpendingController = Get.put(SpendingController());
     return ListTile(
       onTap: () {
         addSpendingController.type = typeModel;
         addSpendingController.noteModel = noteModel;
 
         Get.to(
-          () => AddSpendingPage(
+          () => SpendingPage(
             isDetail: true,
             titleAppBar: "Chỉnh sửa giao dịch",
           ),
