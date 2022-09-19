@@ -15,28 +15,44 @@ class ApiServices {
   static final db = FirebaseFirestore.instance;
 
   // <---------------------- MONEY ----------------------->
-
   static Future getTotalMoney(Function callBack) async {
     final docRef = db.collection("money").doc("total_money");
     docRef.snapshots().listen(
       (data) {
         callBack(data.data());
       },
-      onError: (error) => callBack(-100),
+      onError: (error) => callBack(0),
     );
   }
 
-  static Future updateTotalMoney(double total) async {
+  static Future updateTotalMoney(int total) async {
     await db.collection("money").doc('total_money').update({
       'total': total,
     });
   }
 
   // <---------------------- NOTE ----------------------->
-  // Add new note
-  static Future addNote(NoteModel noteModel, Function callBack) async {
-    double totalNew = 0.0;
-    if (noteModel.type!['groupType'] == Utils.groupType[0]) {
+
+  // <------------------- Get note today ----------------->
+  static Future getNoteToday(Function callBack) async {
+    await db
+        .collection("notes")
+        .where('date', isGreaterThanOrEqualTo: Utils.startToday)
+        .where('date', isLessThanOrEqualTo: Utils.endToday)
+        .orderBy('date')
+        .snapshots()
+        .listen(
+      (event) {
+        callBack(event.docs);
+      },
+    );
+  }
+
+  //  <-------------- Add new note ---------------->
+  static Future addNote(
+      NoteModel noteModel, TypeModel typeModel, Function callBack) async {
+    int totalNew = 0;
+    if (typeModel.groupType == Utils.groupType[0]) {
       totalNew = noteModel.money! + Utils.totalMoney;
     } else {
       totalNew = Utils.totalMoney - noteModel.money!;
@@ -56,7 +72,73 @@ class ApiServices {
     );
   }
 
+  // <----- Update note ---->
+  static Future updateNote(NoteModel noteModel, TypeModel typeNew,
+      TypeModel typeOld, int moneyOld, Function callBack) async {
+    // <-- Return money -->
+    int moneyReturn;
+    if (typeOld.groupType == Utils.groupType[0]) {
+      moneyReturn = Utils.totalMoney -
+          moneyOld; // Nếu là khoản thu thì "Tổng tiền sẽ bị trừ lại"
+    } else {
+      moneyReturn = Utils.totalMoney +
+          moneyOld; // Nếu là chi tiêu thì "Tổng tiền sẽ được cộng lại số tiền đã sử dụng"
+    }
+    await updateTotalMoney(moneyReturn);
+
+    // <-- Update new total -->
+    int totalNew = 0;
+    if (typeNew.groupType == Utils.groupType[0]) {
+      totalNew = noteModel.money! + Utils.totalMoney;
+    } else {
+      totalNew = Utils.totalMoney - noteModel.money!;
+    }
+    print("Update money new $totalNew");
+    await updateTotalMoney(totalNew);
+
+    // <-- Update note -->
+    await db.collection("notes").doc(noteModel.idNote).update({
+      'money': noteModel.money,
+      'note': noteModel.note,
+      'type': noteModel.type,
+    }).then(
+      (value) => (callBack(true)),
+      onError: callBack(false),
+    );
+  }
+
+  // <----- Delete note ---->
+
+  static Future deleteNote(
+      NoteModel noteModel, TypeModel typeModel, Function callBack) async {
+    // Return lại tiền
+    int totalNew;
+    if (typeModel.groupType == Utils.groupType[0]) {
+      totalNew = Utils.totalMoney -
+          noteModel.money!; // Nếu là khoản thu thì "Tổng tiền sẽ bị trừ lại"
+    } else {
+      totalNew = Utils.totalMoney +
+          noteModel
+              .money!; // Nếu là chi tiêu thì "Tổng tiền sẽ được cộng lại số tiền đã sử dụng"
+    }
+    await updateTotalMoney(totalNew);
+
+    db.collection("notes").doc(noteModel.idNote).delete().then(
+          (value) => callBack(true),
+          onError: callBack(false),
+        );
+  }
+
   // <--------------------- TYPES ------------------------->
+  // <----- Get single type ---->
+  static Future getSingleType(String idType, Function callBack) async {
+    db
+        .collection("types")
+        .doc(idType)
+        .get()
+        .then((value) => callBack(value.data()));
+  }
+
   // <----- Get list types: Realtime ---->
   static Future getListTypes(Function result) async {
     db.collection("types").snapshots().listen(
@@ -68,16 +150,21 @@ class ApiServices {
 
   // <----- Upload image to storage ---->
   static Future<String> uploadImageType(File? fileImageType) async {
-    final String nameImageType =
-        "ImageType" + Utils.today.millisecondsSinceEpoch.toString();
+    String nameImageType = "ImageType" + fileImageType.hashCode.toString();
+    print(fileImageType.hashCode);
     final pathStorage = "images/$nameImageType";
+
+    print("Name: $nameImageType");
+    print("Path: $pathStorage");
 
     Reference ref = storage.ref().child(pathStorage);
     if (fileImageType == null) {
       return "";
     } else {
       UploadTask? uploadTask = ref.putFile(fileImageType);
-      final snapshot = await uploadTask.whenComplete(() => () {});
+      final snapshot = await uploadTask.whenComplete(() => () {
+            nameImageType = "";
+          });
       // Get URL image
       final urlImage = await snapshot.ref.getDownloadURL();
       return urlImage;

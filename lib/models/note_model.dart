@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:spend_management/models/type_model.dart';
 
 class NoteModel {
   String? idNote;
-  Map<String, dynamic>? type;
-  double? money;
-  DateTime? date;
+  String? type;
+  int? money;
+  Timestamp? date;
   String? note;
 
   NoteModel({

@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/pages/splash/splash_page.dart';
-
 import 'firebase_options.dart';
+import 'models/note_model.dart';
+import 'models/type_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,10 @@ class MyApp extends StatelessWidget {
     return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashPage(),
+      // localizationsDelegates: [
+      //   GlobalMaterialLocalizations.delegate,
+      //   MonthYearPickerLocalizations.delegate,
+      // ],
     );
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spend_management/pages/add_spending/add_spending_page.dart';
+import 'package:spend_management/pages/add_spending/spending_page.dart';
 import 'package:spend_management/pages/history/history_page.dart';
 import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/pages/splash/splash_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
+import 'package:spend_management/utils/utils.dart';
 
 import 'dashbroad_controller.dart';
 
@@ -13,7 +14,7 @@ class DashBoardPage extends StatelessWidget {
 
   final pages = [
     HomePage(),
-    const HistoryPage(),
+    HistoryPage(),
   ];
 
   DashBoardController dashBroadController = Get.put(DashBoardController());
@@ -27,8 +28,10 @@ class DashBoardPage extends StatelessWidget {
             children: pages,
           ),
           bottomNavigationBar: BottomNavigationBar(
-            unselectedItemColor: Colors.black,
-            selectedItemColor: AppColors.primaryColor,
+            backgroundColor: AppColors.primaryColor,
+            elevation: 0,
+            unselectedItemColor: AppColors.disableColor,
+            selectedItemColor: AppColors.whiteColor,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
@@ -45,11 +48,18 @@ class DashBoardPage extends StatelessWidget {
             currentIndex: dashBroadController.currentPage,
           ),
           floatingActionButton: FloatingActionButton(
-            backgroundColor: AppColors.primaryColor,
+            backgroundColor: AppColors.selectColor,
             onPressed: () {
-              Get.to(AddSpendingPage());
+              Get.to(
+                SpendingPage(
+                  isDetail: false,
+                  titleAppBar: "Thêm giao dịch",
+                ),
+              );
             },
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+            ),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:spend_management/pages/types/type_controller.dart';
 
 import '../models/type_model.dart';
-import '../pages/add_spending/add_spending_controller.dart';
+import '../pages/add_spending/spending_controller.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_styles.dart';
 
@@ -18,7 +18,7 @@ class ItemType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addSpendingController = Get.find<AddSpendingController>();
+    final addSpendingController = Get.find<SpendingController>();
     final typeController = Get.find<TypeController>();
 
     return Column(

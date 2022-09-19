@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/utils/app_colors.dart';
 
-class Input_Component extends StatelessWidget {
-  Input_Component({
+class InputComponent extends StatelessWidget {
+  InputComponent({
     Key? key,
     this.iconInput,
     this.colorTextInput = Colors.black,
