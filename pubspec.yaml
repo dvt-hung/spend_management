@@ -45,6 +45,8 @@ dependencies:
   firebase_storage: ^10.3.8
   cloud_firestore: ^3.4.7
   mat_month_picker_dialog: ^1.1.0
+  scrollable_positioned_list: ^0.2.3
+  scroll_to_index: ^2.1.1
 
 dev_dependencies:
   flutter_test:

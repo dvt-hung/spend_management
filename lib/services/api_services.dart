@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
 import 'package:spend_management/utils/utils.dart';
+
+import '../pages/home/home_controller.dart';
 
 class ApiServices {
   // <----- Variable ---->
@@ -33,9 +36,27 @@ class ApiServices {
 
   // <---------------------- NOTE ----------------------->
 
+  // <------------------- Get note by month ----------------->
+
+  static Future getNoteByMonth(int month, int year, Function callBack) async {
+    db
+        .collection("notes")
+        .where('date',
+            isGreaterThanOrEqualTo: Utils.getFirstDayOfMonth(year, month))
+        .where('date',
+            isLessThanOrEqualTo: Utils.getLastDayOfMonth(year, month))
+        .orderBy('date')
+        .snapshots()
+        .listen(
+      (event) {
+        callBack(event.docs);
+      },
+    );
+  }
+
   // <------------------- Get note today ----------------->
   static Future getNoteToday(Function callBack) async {
-    await db
+    db
         .collection("notes")
         .where('date', isGreaterThanOrEqualTo: Utils.startToday)
         .where('date', isLessThanOrEqualTo: Utils.endToday)
@@ -93,7 +114,6 @@ class ApiServices {
     } else {
       totalNew = Utils.totalMoney - noteModel.money!;
     }
-    print("Update money new $totalNew");
     await updateTotalMoney(totalNew);
 
     // <-- Update note -->
@@ -131,12 +151,14 @@ class ApiServices {
 
   // <--------------------- TYPES ------------------------->
   // <----- Get single type ---->
-  static Future getSingleType(String idType, Function callBack) async {
-    db
+  static Future<TypeModel> getSingleType(String idType) async {
+    TypeModel typeModel = TypeModel();
+    await db
         .collection("types")
         .doc(idType)
         .get()
-        .then((value) => callBack(value.data()));
+        .then((value) => typeModel = TypeModel.fromJson(value));
+    return typeModel;
   }
 
   // <----- Get list types: Realtime ---->
@@ -153,9 +175,6 @@ class ApiServices {
     String nameImageType = "ImageType" + fileImageType.hashCode.toString();
     print(fileImageType.hashCode);
     final pathStorage = "images/$nameImageType";
-
-    print("Name: $nameImageType");
-    print("Path: $pathStorage");
 
     Reference ref = storage.ref().child(pathStorage);
     if (fileImageType == null) {

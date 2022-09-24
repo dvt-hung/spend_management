@@ -130,7 +130,6 @@ class DialogDelete extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         onDelete();
-                        // print("delete");
                       },
                       child: const Text(
                         "Xác nhận",

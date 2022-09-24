@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../utils/utils.dart';
 
@@ -14,9 +15,17 @@ class DashBoardController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    print("LOOP");
-    Utils.monthsOfYear.forEach((element) {
-      print(element);
-    });
+
+    // Compare month and year current in list
+    for (var index = 0; index < Utils.monthsOfYear.length; index++) {
+      bool isCurrent =
+          Utils.today.toDate().month == Utils.monthsOfYear[index].month &&
+              Utils.today.toDate().year == Utils.monthsOfYear[index].year;
+
+      if (isCurrent) {
+        Utils.selectIndexListMonthOfYear = index;
+        break;
+      }
+    }
   }
 }

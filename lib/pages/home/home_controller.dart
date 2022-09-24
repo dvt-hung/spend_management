@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
@@ -9,6 +10,9 @@ class HomeController extends GetxController {
 
   List<Map<String, dynamic>> mapNoteIncome = [];
   List<Map<String, dynamic>> mapNoteSpending = [];
+
+  final id_Income = Set();
+  final id_Spend = Set();
 
   int spendingMoney = 0;
   int incomeMoney = 0;
@@ -23,40 +27,39 @@ class HomeController extends GetxController {
     );
   }
 
-  getNoteToday() async {
-    await ApiServices.getNoteToday((event) async {
-      List<dynamic> result = event;
-      // <-- Clear variable money + list -->
-      spendingMoney = 0;
-      incomeMoney = 0;
+  Future getNotes() async {
+    ApiServices.getNoteToday(
+      (event) async {
+        List<dynamic> result = event;
+        await processData(result);
+      },
+    );
+  }
 
-      // <-- Loop data from db -->
-      for (var data in result) {
-        mapNoteIncome.clear();
-        mapNoteSpending.clear();
-        NoteModel note = NoteModel.fromJon(data);
-        // <--- Get type by note.idType --->
-        await ApiServices.getSingleType(
-          note.type.toString(),
-          (dateType) async {
-            TypeModel typeModel = TypeModel.fromJson(dateType);
-            // <--- If type = "khoản thu" --->
-            if (typeModel.groupType == Utils.groupType[0]) {
-              mapNoteIncome.add({"note": note, "type": typeModel});
-              incomeMoney = await plusMoney(incomeMoney, note.money!);
-            }
-            // <--- If type = "chi tiêu" --->
-            else {
-              mapNoteSpending.add({"note": note, "type": typeModel});
-              spendingMoney = await plusMoney(spendingMoney, note.money!);
-            }
+  Future processData(List<dynamic> result) async {
+    // <-- Clear variable money + list -->
+    incomeMoney = 0;
+    spendingMoney = 0;
+    mapNoteIncome.clear();
+    mapNoteSpending.clear();
+    // <-- Loop data from db -->
+    for (var i = 0; i < result.length; i++) {
+      NoteModel note = NoteModel.fromJon(result[i]);
 
-            // Update GetX
-            update(['getToday']);
-          },
-        );
+      TypeModel typeModel =
+          await ApiServices.getSingleType(note.type.toString());
+
+      if (typeModel.groupType == Utils.groupType[0]) {
+        mapNoteIncome.add({"note": note, "type": typeModel});
+        incomeMoney = await plusMoney(incomeMoney, note.money!);
       }
-    });
+      // // <--- If type = "chi tiêu" --->
+      else {
+        mapNoteSpending.add({"note": note, "type": typeModel});
+        spendingMoney = await plusMoney(spendingMoney, note.money!);
+      }
+      update(['getToday']);
+    }
   }
 
   // <----- update money: spending or income ---->
@@ -69,7 +72,7 @@ class HomeController extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
-    getTotalMoney();
-    await getNoteToday();
+    await getTotalMoney();
+    await getNotes();
   }
 }

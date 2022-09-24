@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/models/type_model.dart';
 
@@ -5,10 +6,15 @@ import '../../models/note_model.dart';
 import '../../services/api_services.dart';
 import '../../utils/app_dialogs.dart';
 import '../../utils/utils.dart';
+import '../dashboard/dashbroad_controller.dart';
 import '../dashboard/dashbroad_page.dart';
+import '../history/history_controller.dart';
+import '../home/home_controller.dart';
 
 class SpendingController extends GetxController {
   // <---- Variable ---->
+  TextEditingController moneyTextController = TextEditingController();
+  TextEditingController noteTextController = TextEditingController();
   TypeModel type = TypeModel();
   NoteModel noteModel = NoteModel();
   void changeType(TypeModel typeModel) {
@@ -31,7 +37,10 @@ class SpendingController extends GetxController {
     });
   }
 
-  Future addNote(String money, String note) async {
+  Future addNote(
+    String money,
+    String note,
+  ) async {
     if (type.idType == null || money.isEmpty) {
       AppDialogs.showSnackBar(
         "Thông báo ",
@@ -44,23 +53,28 @@ class SpendingController extends GetxController {
       noteModel.type = type.idType;
 
       Get.dialog(AppDialogs.alertDialogProgress);
-      await ApiServices.addNote(noteModel, type, (result) {
-        if (result) {
-          Get.back();
-          AppDialogs.showSnackBar(
-            "Thông báo ",
-            "Đã thêm mới thành công",
-          );
-
-          Get.offAll(DashBoardPage());
-        } else {
-          AppDialogs.showSnackBar(
-            "Thông báo ",
-            "Đã xảy ra lỗi",
-          );
-          Get.back();
-        }
-      });
+      await ApiServices.addNote(
+        noteModel,
+        type,
+        (result) {
+          if (result) {
+            AppDialogs.showSnackBar(
+              "Thông báo ",
+              "Đã thêm giao dịch thành công",
+            );
+            Get.delete<HomeController>();
+            Get.delete<HistoryController>();
+            Get.delete<DashBoardController>();
+            Get.offAll(DashBoardPage());
+          } else {
+            AppDialogs.showSnackBar(
+              "Thông báo ",
+              "Đã xảy ra lỗi",
+            );
+            Get.back();
+          }
+        },
+      );
     }
   }
 
@@ -79,10 +93,9 @@ class SpendingController extends GetxController {
       moneyOld,
       (result) {
         if (result) {
-          Get.back();
-          Get.offAll(() => DashBoardPage());
           AppDialogs.showSnackBar(
               "Thông báo", "Đã chỉnh sửa giao dịch thành công");
+          Get.back();
         } else {
           AppDialogs.showSnackBar("Thông báo", "Đã có lỗi xảy ra!");
           Get.back();
@@ -97,12 +110,8 @@ class SpendingController extends GetxController {
     super.onClose();
     type = TypeModel();
     noteModel = NoteModel();
+    moneyTextController.clear();
+    noteTextController.clear();
     // disposeScreen();
-  }
-
-  Future disposeScreen() async {
-    super.onClose();
-    type = TypeModel();
-    noteModel = NoteModel();
   }
 }
