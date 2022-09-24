@@ -1,14 +1,35 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
+
+import 'app_colors.dart';
+import 'app_styles.dart';
 
 class Utils {
   //<----- VARIABLE ----->
   static int totalMoney = 0;
   static List<DateTime> monthsOfYear = [];
+  static int selectIndexListMonthOfYear = 0;
+  static List<List<NoteModel>> listTest = [];
+
+  //<---- SnackBar ---->
+
+  static void showSnackBar(BuildContext context, String title) {
+    SnackBar snackBar = SnackBar(
+      content: Text(
+        title,
+        style: AppStyles.textStyle.copyWith(color: AppColors.thirdColor),
+      ),
+      backgroundColor: AppColors.whiteColor,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
   // <---- GET TODAY---->
 
@@ -21,10 +42,9 @@ class Utils {
       today.toDate().month, today.toDate().day, 23, 59, 59));
 
   // <---- GET FIRST AND END DAY OF MONTH ---->
-  // DateTime lastDayOfMonth =
-  // new DateTime(now.year, 8 + 1, 0, 23, 59, 59);
-  //
-  // DateTime date = DateTime(now.year, 8, 1);
+
+  static DateFormat formatFullDate = DateFormat("EEEE,  dd - MM - yyyy", "vi");
+
   static Timestamp getFirstDayOfMonth(int year, int month) {
     Timestamp firstDay = Timestamp.fromDate(DateTime(year, month, 1));
 

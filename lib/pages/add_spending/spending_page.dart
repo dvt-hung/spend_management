@@ -5,7 +5,11 @@ import 'package:spend_management/components/input_component.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
 import 'package:spend_management/pages/add_spending/spending_controller.dart';
+import 'package:spend_management/pages/dashboard/dashbroad_controller.dart';
 import 'package:spend_management/pages/dashboard/dashbroad_page.dart';
+import 'package:spend_management/pages/history/history_controller.dart';
+import 'package:spend_management/pages/home/home_controller.dart';
+import 'package:spend_management/pages/home/home_page.dart';
 
 import 'package:spend_management/pages/types/types_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
@@ -22,15 +26,13 @@ class SpendingPage extends StatelessWidget {
 
   SpendingController addSpendingController = Get.put(SpendingController());
 
-  TextEditingController moneyTextController = TextEditingController();
-  TextEditingController noteTextController = TextEditingController();
   TypeModel typeOld = TypeModel();
   int moneyOld = 0;
   @override
   Widget build(BuildContext context) {
     typeOld = addSpendingController.type;
     if (addSpendingController.noteModel.money != null) {
-      moneyTextController.text =
+      addSpendingController.moneyTextController.text =
           addSpendingController.noteModel.money!.toString();
       moneyOld = addSpendingController.noteModel.money!;
     }
@@ -79,7 +81,8 @@ class SpendingPage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      int moneyNew = int.parse(moneyTextController.text);
+                      int moneyNew = int.parse(
+                          addSpendingController.moneyTextController.text);
                       addSpendingController.updateNote(
                           moneyNew, moneyOld, typeOld);
                     },
@@ -92,8 +95,11 @@ class SpendingPage extends StatelessWidget {
               )
             : IconButton(
                 onPressed: () {
-                  String note = noteTextController.text;
-                  addSpendingController.addNote(moneyTextController.text, note);
+                  String note = addSpendingController.noteTextController.text;
+                  addSpendingController.addNote(
+                    addSpendingController.moneyTextController.text,
+                    note,
+                  );
                 },
                 icon: const Icon(
                   Icons.check,
@@ -104,65 +110,52 @@ class SpendingPage extends StatelessWidget {
     );
   }
 
-  Container buildBody() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.secondColor,
-            AppColors.primaryColor,
-            AppColors.whiteColor,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: buildAppBar(),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-              child: GetBuilder<SpendingController>(
-                id: 'updateType',
-                builder: (_) {
-                  return Column(
-                    children: [
-                      Text(
-                        addSpendingController.noteModel.date == null
-                            ? Utils.getStringToDay()
-                            : Utils.convertDateToString(
-                                addSpendingController.noteModel.date!),
-                        style: AppStyles.titleStyle.copyWith(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.whiteColor),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      inputMoney(),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      inputType(),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      inputNote(),
-                    ],
-                  );
-                },
-              ),
+  Widget buildBody() {
+    return Scaffold(
+        backgroundColor: AppColors.primaryColor,
+        appBar: buildAppBar(),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+            child: GetBuilder<SpendingController>(
+              id: 'updateType',
+              builder: (_) {
+                return Column(
+                  children: [
+                    Text(
+                      addSpendingController.noteModel.date == null
+                          ? Utils.getStringToDay()
+                          : Utils.convertDateToString(
+                              addSpendingController.noteModel.date!),
+                      style: AppStyles.titleStyle.copyWith(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.whiteColor),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    inputMoney(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    inputType(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    inputNote(),
+                  ],
+                );
+              },
             ),
-          )),
-    );
+          ),
+        ));
   }
 
   InputComponent inputNote() {
     return InputComponent(
-      controller: noteTextController,
+      controller: addSpendingController.noteTextController,
       iconInput: AppUrls.urlIconNote,
       hinText: addSpendingController.noteModel.note.toString().isEmpty ||
               addSpendingController.noteModel.note == null
@@ -190,7 +183,7 @@ class SpendingPage extends StatelessWidget {
 
   InputComponent inputMoney() {
     return InputComponent(
-      controller: moneyTextController,
+      controller: addSpendingController.moneyTextController,
       iconInput: AppUrls.urlIconMoney,
       hinText: "0 đ",
       // Nếu là khoản thu thì text color = Green | chi tiêu thì text color = Red

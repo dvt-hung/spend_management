@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:spend_management/pages/home/home_controller.dart';
+import 'package:spend_management/pages/splash/splash_controller.dart';
 
-import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -18,21 +18,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    for (int i = 1; i <= 12; i++) {
-      DateTime month = DateTime(Utils.today.toDate().year, i);
-      Utils.monthsOfYear.add(month);
-    }
-
-    Future.delayed(
-      const Duration(seconds: 3),
-      () => Get.off(() => DashBoardPage()),
-    );
-  }
+  SplashController splashController = Get.put(SplashController());
 
   @override
   Widget build(BuildContext context) {

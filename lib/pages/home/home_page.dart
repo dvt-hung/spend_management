@@ -32,36 +32,47 @@ class HomePage extends StatelessWidget {
                 children: [
                   // <---- Hiển thị tổng tiền đang có ---->
                   GetBuilder<HomeController>(
-                      id: 'totalMoney',
-                      builder: (_) {
-                        return buildTotalMoney(Utils.totalMoney);
-                      }),
+                    id: 'totalMoney',
+                    builder: (_) {
+                      return buildTotalMoney(Utils.totalMoney);
+                    },
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-
-                  // <---- Hiển thị tổng chi tiêu hôm nay ---->
                   GetBuilder<HomeController>(
-                      id: 'getToday',
-                      builder: (_) {
-                        return Column(
-                          children: [
-                            buildNoteContainer(
-                                homeController.mapNoteSpending,
-                                homeController.spendingMoney,
-                                "Chi tiêu hôm nay",
-                                AppStyles.priceStyleSpending20),
-                            const SizedBox(
-                              height: 20.0,
-                            ),
-                            buildNoteContainer(
-                                homeController.mapNoteIncome,
-                                homeController.incomeMoney,
-                                "Khoản thu hôm nay",
-                                AppStyles.priceStyleIncome20),
-                          ],
-                        );
-                      }),
+                    id: 'getToday',
+                    builder: (_) {
+                      return Column(
+                        children: [
+                          buildNoteContainer(
+                              homeController.mapNoteSpending,
+                              homeController.spendingMoney,
+                              "Chi tiêu hôm nay",
+                              AppStyles.priceStyleSpending20),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          buildNoteContainer(
+                              homeController.mapNoteIncome,
+                              homeController.incomeMoney,
+                              "Khoản thu hôm nay",
+                              AppStyles.priceStyleIncome20),
+                        ],
+                      );
+                    },
+                  ),
+                  // <---- Hiển thị tổng chi tiêu hôm nay ---->
+                  // FutureBuilder(
+                  //     future: homeController.getNotes(),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return const CircularProgressIndicator();
+                  //       } else {
+                  //         return
+                  //       }
+                  //     }),
                 ],
               ),
             ),
@@ -133,7 +144,7 @@ class HomePage extends StatelessWidget {
               style: AppStyles.priceStyle.copyWith(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: total > 0 ? AppColors.whiteColor : AppColors.thirdColor,
+                color: total <= 0 ? AppColors.thirdColor : AppColors.whiteColor,
               ),
             ),
             Text(
