@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spend_management/pages/add_spending/spending_page.dart';
+import 'package:spend_management/pages/history/history_controller.dart';
 import 'package:spend_management/pages/history/history_page.dart';
 import 'package:spend_management/pages/home/home_page.dart';
 import 'package:spend_management/pages/splash/splash_page.dart';
+import 'package:spend_management/services/api_services.dart';
 import 'package:spend_management/utils/app_colors.dart';
 import 'package:spend_management/utils/utils.dart';
 
