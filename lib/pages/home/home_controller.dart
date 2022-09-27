@@ -44,7 +44,7 @@ class HomeController extends GetxController {
     mapNoteSpending.clear();
     // <-- Loop data from db -->
     for (var i = 0; i < result.length; i++) {
-      NoteModel note = NoteModel.fromJon(result[i]);
+      NoteModel note = NoteModel.fromJson(result[i]);
 
       TypeModel typeModel =
           await ApiServices.getSingleType(note.type.toString());

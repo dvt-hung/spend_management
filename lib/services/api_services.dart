@@ -37,6 +37,39 @@ class ApiServices {
   // <---------------------- NOTE ----------------------->
 
   // <------------------- Get note by month ----------------->
+  static Future<List<NoteModel>> getAllNote() async {
+    List<NoteModel> listNote = [];
+    db.collection("notes").orderBy('date').snapshots().listen(
+      (event) {
+        List<dynamic> temp = event.docs;
+        for (var element in temp) {
+          NoteModel noteModel = NoteModel.fromJson(element);
+          listNote.add(noteModel);
+        }
+      },
+    );
+    return listNote;
+  }
+
+  static Future getAllNote2(Function callBack) async {
+    List<Map<String, dynamic>> result = [];
+    db.collection("notes").orderBy('date').snapshots().listen(
+      (event) async {
+        List<dynamic> temp = event.docs;
+        for (var element in temp) {
+          NoteModel noteModel = NoteModel.fromJson(element);
+          TypeModel typeModel = TypeModel();
+          typeModel = await getSingleType(noteModel.type.toString());
+
+          result.add({
+            'note': noteModel,
+            'type': typeModel,
+          });
+        }
+        callBack(result);
+      },
+    );
+  }
 
   static Future getNoteByMonth(int month, int year, Function callBack) async {
     db
@@ -150,6 +183,20 @@ class ApiServices {
   }
 
   // <--------------------- TYPES ------------------------->
+  static Future<List<TypeModel>> getAllType() async {
+    List<TypeModel> listType = [];
+    db.collection("types").snapshots().listen(
+      (event) {
+        List<dynamic> temp = event.docs;
+        for (var element in temp) {
+          TypeModel typeModel = TypeModel.fromJson(element);
+          listType.add(typeModel);
+        }
+      },
+    );
+    return listType;
+  }
+
   // <----- Get single type ---->
   static Future<TypeModel> getSingleType(String idType) async {
     TypeModel typeModel = TypeModel();

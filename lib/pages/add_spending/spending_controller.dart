@@ -65,7 +65,8 @@ class SpendingController extends GetxController {
             Get.delete<HomeController>();
             Get.delete<HistoryController>();
             Get.delete<DashBoardController>();
-            Get.offAll(DashBoardPage());
+            Get.delete<SpendingController>();
+            Get.to(DashBoardPage());
           } else {
             AppDialogs.showSnackBar(
               "Thông báo ",

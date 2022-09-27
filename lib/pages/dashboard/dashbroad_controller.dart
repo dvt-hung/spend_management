@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/utils.dart';
+import '../history/history_controller.dart';
 
 class DashBoardController extends GetxController {
   int currentPage = 0;
@@ -12,7 +13,7 @@ class DashBoardController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
 

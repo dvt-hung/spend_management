@@ -16,7 +16,7 @@ class NoteModel {
     this.note,
   });
 
-  NoteModel.fromJon(dynamic json) {
+  NoteModel.fromJson(dynamic json) {
     idNote = json['idNote'] ?? '';
     type = json['type'] ?? '';
     money = json['money'] ?? '';
