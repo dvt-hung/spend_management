@@ -1,12 +1,9 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get/get.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
 import 'package:spend_management/utils/utils.dart';
-
-import '../pages/home/home_controller.dart';
 
 class ApiServices {
   // <----- Variable ---->
@@ -37,38 +34,32 @@ class ApiServices {
   // <---------------------- NOTE ----------------------->
 
   // <------------------- Get note by month ----------------->
-  static Future<List<NoteModel>> getAllNote() async {
-    List<NoteModel> listNote = [];
-    db.collection("notes").orderBy('date').snapshots().listen(
-      (event) {
-        List<dynamic> temp = event.docs;
-        for (var element in temp) {
-          NoteModel noteModel = NoteModel.fromJson(element);
-          listNote.add(noteModel);
-        }
-      },
-    );
-    return listNote;
-  }
 
-  static Future getAllNote2(Function callBack) async {
+  static Future getAllNote(Function callBack) async {
     List<Map<String, dynamic>> result = [];
-    db.collection("notes").orderBy('date').snapshots().listen(
-      (event) async {
-        List<dynamic> temp = event.docs;
-        for (var element in temp) {
-          NoteModel noteModel = NoteModel.fromJson(element);
-          TypeModel typeModel = TypeModel();
-          typeModel = await getSingleType(noteModel.type.toString());
+    await getAllType((listTypeModel) {
+      db.collection("notes").orderBy('date').snapshots().listen(
+        (event) async {
+          List<dynamic> temp = event.docs;
+          for (var element in temp) {
+            NoteModel noteModel = NoteModel.fromJson(element);
 
-          result.add({
-            'note': noteModel,
-            'type': typeModel,
-          });
-        }
-        callBack(result);
-      },
-    );
+            TypeModel typeModel = TypeModel();
+
+            typeModel = listTypeModel.firstWhere((element) {
+              TypeModel type = element;
+              return type.idType == noteModel.type;
+            });
+
+            result.add({
+              'note': noteModel,
+              'type': typeModel,
+            });
+          }
+          callBack(result);
+        },
+      );
+    });
   }
 
   static Future getNoteByMonth(int month, int year, Function callBack) async {
@@ -129,33 +120,34 @@ class ApiServices {
   // <----- Update note ---->
   static Future updateNote(NoteModel noteModel, TypeModel typeNew,
       TypeModel typeOld, int moneyOld, Function callBack) async {
-    // <-- Return money -->
-    int moneyReturn;
-    if (typeOld.groupType == Utils.groupType[0]) {
-      moneyReturn = Utils.totalMoney -
-          moneyOld; // Nếu là khoản thu thì "Tổng tiền sẽ bị trừ lại"
-    } else {
-      moneyReturn = Utils.totalMoney +
-          moneyOld; // Nếu là chi tiêu thì "Tổng tiền sẽ được cộng lại số tiền đã sử dụng"
-    }
-    await updateTotalMoney(moneyReturn);
-
-    // <-- Update new total -->
-    int totalNew = 0;
-    if (typeNew.groupType == Utils.groupType[0]) {
-      totalNew = noteModel.money! + Utils.totalMoney;
-    } else {
-      totalNew = Utils.totalMoney - noteModel.money!;
-    }
-    await updateTotalMoney(totalNew);
-
     // <-- Update note -->
     await db.collection("notes").doc(noteModel.idNote).update({
       'money': noteModel.money,
       'note': noteModel.note,
-      'type': noteModel.type,
+      'type': typeNew.idType,
     }).then(
-      (value) => (callBack(true)),
+      (value) async {
+        // <-- Return money -->
+        int moneyReturn;
+        if (typeOld.groupType == Utils.groupType[0]) {
+          moneyReturn = Utils.totalMoney -
+              moneyOld; // Nếu là khoản thu thì "Tổng tiền sẽ bị trừ lại"
+        } else {
+          moneyReturn = Utils.totalMoney +
+              moneyOld; // Nếu là chi tiêu thì "Tổng tiền sẽ được cộng lại số tiền đã sử dụng"
+        }
+        await updateTotalMoney(moneyReturn);
+
+        // <-- Update new total -->
+        int totalNew = 0;
+        if (typeNew.groupType == Utils.groupType[0]) {
+          totalNew = noteModel.money! + Utils.totalMoney;
+        } else {
+          totalNew = Utils.totalMoney - noteModel.money!;
+        }
+        await updateTotalMoney(totalNew);
+        callBack(true);
+      },
       onError: callBack(false),
     );
   }
@@ -183,7 +175,8 @@ class ApiServices {
   }
 
   // <--------------------- TYPES ------------------------->
-  static Future<List<TypeModel>> getAllType() async {
+  static Future<List<TypeModel>> getAllType(
+      Function(List<TypeModel>) callBack) async {
     List<TypeModel> listType = [];
     db.collection("types").snapshots().listen(
       (event) {
@@ -192,6 +185,7 @@ class ApiServices {
           TypeModel typeModel = TypeModel.fromJson(element);
           listType.add(typeModel);
         }
+        callBack(listType);
       },
     );
     return listType;
@@ -220,7 +214,6 @@ class ApiServices {
   // <----- Upload image to storage ---->
   static Future<String> uploadImageType(File? fileImageType) async {
     String nameImageType = "ImageType" + fileImageType.hashCode.toString();
-    print(fileImageType.hashCode);
     final pathStorage = "images/$nameImageType";
 
     Reference ref = storage.ref().child(pathStorage);
@@ -244,14 +237,17 @@ class ApiServices {
 
     typeModel.urlType = urlImage;
 
-    await db.collection("types").add(typeModel.toJson()).then((data) {
-      db.collection("types").doc(data.id).update(
-        {
-          'idType': data.id,
-        },
-      );
-      callBack(true);
-    }, onError: callBack(false));
+    await db.collection("types").add(typeModel.toJson()).then(
+      (data) {
+        db.collection("types").doc(data.id).update(
+          {
+            'idType': data.id,
+          },
+        );
+        callBack(true);
+      },
+      onError: callBack(false),
+    );
   }
 
   // <----- Update type ---->

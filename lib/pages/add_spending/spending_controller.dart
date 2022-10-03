@@ -17,6 +17,7 @@ class SpendingController extends GetxController {
   TextEditingController noteTextController = TextEditingController();
   TypeModel type = TypeModel();
   NoteModel noteModel = NoteModel();
+
   void changeType(TypeModel typeModel) {
     type = typeModel;
     update(['updateType']);
@@ -85,7 +86,7 @@ class SpendingController extends GetxController {
     TypeModel typeOld,
   ) async {
     noteModel.money = moneyNew;
-
+    print("type ${type.contentType}");
     AppDialogs.showDialogProgress();
     await ApiServices.updateNote(
       noteModel,
@@ -94,9 +95,11 @@ class SpendingController extends GetxController {
       moneyOld,
       (result) {
         if (result) {
+          Get.back();
+          Get.back();
+
           AppDialogs.showSnackBar(
               "Thông báo", "Đã chỉnh sửa giao dịch thành công");
-          Get.back();
         } else {
           AppDialogs.showSnackBar("Thông báo", "Đã có lỗi xảy ra!");
           Get.back();

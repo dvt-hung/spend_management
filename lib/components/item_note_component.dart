@@ -13,10 +13,12 @@ class ItemNote extends StatelessWidget {
     Key? key,
     required this.noteModel,
     required this.typeModel,
+    required this.isUpdate,
   }) : super(key: key);
 
   final NoteModel noteModel;
   final TypeModel typeModel;
+  final bool isUpdate;
   @override
   Widget build(BuildContext context) {
     SpendingController addSpendingController = Get.put(SpendingController());
@@ -24,13 +26,14 @@ class ItemNote extends StatelessWidget {
       onTap: () {
         addSpendingController.type = typeModel;
         addSpendingController.noteModel = noteModel;
-
-        Get.to(
-          () => SpendingPage(
-            isDetail: true,
-            titleAppBar: "Chỉnh sửa giao dịch",
-          ),
-        );
+        if (isUpdate) {
+          Get.to(
+            () => SpendingPage(
+              isDetail: true,
+              titleAppBar: "Chỉnh sửa giao dịch",
+            ),
+          );
+        }
       },
       leading: CachedNetworkImage(
         imageUrl: typeModel.urlType.toString(),

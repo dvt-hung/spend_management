@@ -6,9 +6,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
 import 'package:spend_management/pages/history/history_controller.dart';
-import 'package:spend_management/services/api_services.dart';
 import 'package:spend_management/utils/app_colors.dart';
-import 'package:spend_management/utils/app_dialogs.dart';
 import 'package:spend_management/utils/utils.dart';
 
 import '../../components/item_note_component.dart';
@@ -73,7 +71,7 @@ class HistoryPage extends StatelessWidget {
 
   //<---------------------- Body ---------------------->
 
-  PageView buildBody() {
+  Widget buildBody() {
     return PageView.builder(
       controller: historyController.pageViewController,
       itemCount: Utils.monthsOfYear.length,
@@ -153,7 +151,11 @@ class HistoryPage extends StatelessWidget {
           itemBuilder: (context, index) {
             NoteModel noteCurrent = listNoteModelCurrent[index]['note'];
             TypeModel typeCurrent = listNoteModelCurrent[index]['type'];
-            return ItemNote(noteModel: noteCurrent, typeModel: typeCurrent);
+            return ItemNote(
+              noteModel: noteCurrent,
+              typeModel: typeCurrent,
+              isUpdate: false,
+            );
           },
         ),
       ],
