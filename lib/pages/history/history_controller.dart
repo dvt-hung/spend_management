@@ -4,7 +4,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/services/api_services.dart';
-import 'package:spend_management/utils/app_dialogs.dart';
 import 'package:spend_management/utils/utils.dart';
 
 import '../../models/type_model.dart';
@@ -43,13 +42,14 @@ class HistoryController extends GetxController {
 
   // Lấy ra danh sách Note theo tháng
   Future filterNoteByMonth() async {
-    print("run");
+    List<Map<String, dynamic>> listNoteTypeTemp = listNoteType;
+    List<Map<String, dynamic>> notes = [];
+
     DateTime time = Utils.monthsOfYear[Utils.selectIndexListMonthOfYear];
-    final notes = listNoteType.where((element) {
+    notes = listNoteTypeTemp.where((element) {
       NoteModel noteModel = element['note'];
       return noteModel.date!.toDate().month == time.month;
     }).toList();
-    update(['updateData']);
 
     await getDateOfMonthHasNote(notes);
   }
@@ -94,24 +94,25 @@ class HistoryController extends GetxController {
   Future filterNoteByDateOfMonth(
       List<DateTime> dates, List<Map<String, dynamic>> listNoteType) async {
     listResult.clear();
+
     for (var date in dates) {
-      final temp = listNoteType.where((element) {
+      var temp = listNoteType.where((element) {
         NoteModel noteTemp = element['note'];
 
         return noteTemp.date!.toDate().day == date.day;
       }).toList();
+
       listResult.add(temp);
     }
+
     update(['updateData']);
   }
 
   void getData() async {
-    await ApiServices.getAllNote2((value) async {
+    await ApiServices.getAllNote((value) async {
       listNoteType = value;
-
-      update(['updateData']);
-
       await filterNoteByMonth();
+      listNoteType.clear();
     });
   }
 
@@ -119,6 +120,7 @@ class HistoryController extends GetxController {
   void onReady() async {
     super.onReady();
     initializeDateFormatting();
+
     getData();
 
     onChangePage(Utils.selectIndexListMonthOfYear);

@@ -59,6 +59,7 @@ class NoteBlock extends StatelessWidget {
                 return ItemNote(
                   noteModel: noteModel,
                   typeModel: typeModel,
+                  isUpdate: true,
                 );
               }),
         ],
