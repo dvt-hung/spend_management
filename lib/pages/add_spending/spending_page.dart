@@ -81,6 +81,9 @@ class SpendingPage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
+                      String note =
+                          addSpendingController.noteTextController.text;
+                      addSpendingController.noteModel.note = note;
                       int moneyNew = int.parse(
                           addSpendingController.moneyTextController.text);
                       addSpendingController.updateNote(
@@ -154,6 +157,10 @@ class SpendingPage extends StatelessWidget {
   }
 
   InputComponent inputNote() {
+    if (addSpendingController.noteModel.note != null) {
+      addSpendingController.noteTextController.text =
+          addSpendingController.noteModel.note.toString();
+    }
     return InputComponent(
       controller: addSpendingController.noteTextController,
       iconInput: AppUrls.urlIconNote,

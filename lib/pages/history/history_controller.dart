@@ -43,8 +43,8 @@ class HistoryController extends GetxController {
   // Lấy ra danh sách Note theo tháng
   Future filterNoteByMonth() async {
     List<Map<String, dynamic>> listNoteTypeTemp = listNoteType;
-    List<Map<String, dynamic>> notes = [];
 
+    List<Map<String, dynamic>> notes = [];
     DateTime time = Utils.monthsOfYear[Utils.selectIndexListMonthOfYear];
     notes = listNoteTypeTemp.where((element) {
       NoteModel noteModel = element['note'];
@@ -112,16 +112,20 @@ class HistoryController extends GetxController {
     await ApiServices.getAllNote((value) async {
       listNoteType = value;
       await filterNoteByMonth();
-      listNoteType.clear();
     });
+  }
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    getData();
   }
 
   @override
   void onReady() async {
     super.onReady();
     initializeDateFormatting();
-
-    getData();
 
     onChangePage(Utils.selectIndexListMonthOfYear);
   }
