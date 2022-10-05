@@ -47,6 +47,7 @@ dependencies:
   mat_month_picker_dialog: ^1.1.0
   scrollable_positioned_list: ^0.2.3
   scroll_to_index: ^2.1.1
+  flutter_launcher_icons: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,11 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/1024.png"
+  adaptive_icon_background: "#ffffff"
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

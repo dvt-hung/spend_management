@@ -5,11 +5,12 @@ import 'package:spend_management/models/note_model.dart';
 import 'package:spend_management/models/type_model.dart';
 import 'package:spend_management/pages/add_spending/spending_controller.dart';
 import 'package:spend_management/pages/add_spending/spending_page.dart';
+import 'package:spend_management/utils/app_dialogs.dart';
 import '../utils/app_styles.dart';
 import '../utils/utils.dart';
 
 class ItemNote extends StatelessWidget {
-  const ItemNote({
+  ItemNote({
     Key? key,
     required this.noteModel,
     required this.typeModel,
@@ -33,6 +34,9 @@ class ItemNote extends StatelessWidget {
               titleAppBar: "Chỉnh sửa giao dịch",
             ),
           );
+        } else {
+          print("dasdsa ${Utils.formatTime.format(noteModel.date!.toDate())}");
+          AppDialogs.showDetailNote(noteModel, typeModel);
         }
       },
       leading: CachedNetworkImage(

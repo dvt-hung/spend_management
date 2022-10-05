@@ -44,7 +44,7 @@ class Utils {
   // <---- GET FIRST AND END DAY OF MONTH ---->
 
   static DateFormat formatFullDate = DateFormat("EEEE,  dd - MM - yyyy", "vi");
-
+  static DateFormat formatTime = DateFormat("Hm");
   static Timestamp getFirstDayOfMonth(int year, int month) {
     Timestamp firstDay = Timestamp.fromDate(DateTime(year, month, 1));
 
