@@ -25,9 +25,9 @@ class ItemNote extends StatelessWidget {
     SpendingController addSpendingController = Get.put(SpendingController());
     return ListTile(
       onTap: () {
-        addSpendingController.type = typeModel;
-        addSpendingController.noteModel = noteModel;
         if (isUpdate) {
+          addSpendingController.type = typeModel;
+          addSpendingController.noteModel = noteModel;
           Get.to(
             () => SpendingPage(
               isDetail: true,
@@ -35,7 +35,6 @@ class ItemNote extends StatelessWidget {
             ),
           );
         } else {
-          print("dasdsa ${Utils.formatTime.format(noteModel.date!.toDate())}");
           AppDialogs.showDetailNote(noteModel, typeModel);
         }
       },
